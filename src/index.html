@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>VRML Loader</title>
+    <script type="text/javascript" src="./libs/three.js"></script>
+    <script type="text/javascript" src="./libs/VRMLLoader.js"></script>
+
+    <script type="text/javascript" src="./libs/stats.js"></script>
+    <script type="text/javascript" src="./libs/dat.gui.js"></script>
+    <script type="text/javascript" src="./libs/OrbitControls.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="Stats-output">
+    </div>
+    <div id="WebGL-output">
+    </div>
+
+    <script type="text/javascript">
+        function init() {
+            let stats = initStats();
+
+            let scene = new THREE.Scene();
+
+            let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+            let webGLRenderer = new THREE.WebGLRenderer();
+            webGLRenderer.setClearColor(new THREE.Color(0x000, 1.0));
+            webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+            webGLRenderer.shadowMapEnabled = true;
+
+            camera.position.x = 30;
+            camera.position.y = 30;
+            camera.position.z = 30;
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+            let orbit = new THREE.OrbitControls(camera);
+
+            let dir1 = new THREE.DirectionalLight(0.4);
+            dir1.position.set(-30, 30, -30);
+            scene.add(dir1);
+
+            let dir2 = new THREE.DirectionalLight(0.4);
+            dir2.position.set(-30, 30, 30);
+            scene.add(dir2);
+
+            let dir3 = new THREE.DirectionalLight(0.4);
+            dir3.position.set(30, 30, -30);
+            scene.add(dir3);
+
+            let spotLight = new THREE.SpotLight(0xffffff);
+            spotLight.position.set(30, 30, 30);
+            scene.add(spotLight);
+
+            document.getElementById("WebGL-output").appendChild(webGLRenderer.domElement);
+
+            let step = 0;
+
+            let controls = new function () {};
+
+            let gui = new dat.GUI();
+            let loader = new THREE.VRMLLoader();
+            let group = new THREE.Object3D();
+            loader.load("./assets/models/vrml/tree.wrl", function (model) {
+                console.log(model);
+                model.traverse(function (child) {
+                    if (child instanceof THREE.Mesh) {
+                        console.log(child.geometry);
+                    }
+                });
+
+                model.scale.set(10, 10, 10);
+                scene.add(model);
+            });
+
+
+            render();
+
+
+            function render() {
+                stats.update();
+
+                orbit.update();
+
+                if (group) {
+                    group.rotation.y += 0.006;
+                }
+
+                requestAnimationFrame(render);
+                webGLRenderer.render(scene, camera);
+            }
+
+            function initStats() {
+                let stats = new Stats();
+                stats.setMode(0);
+                stats.domElement.style.position = 'absolute';
+                stats.domElement.style.left = '0px';
+                stats.domElement.style.top = '0px';
+
+                document.getElementById("Stats-output").appendChild(stats.domElement);
+
+                return stats;
+            }
+        }
+        window.onload = init;
+    </script>
+</body>
+
+</html>
