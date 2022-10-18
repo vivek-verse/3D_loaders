@@ -16,6 +16,11 @@ app.get('/vrml', function(req, res) {
     } catch (err) {}
 });
 
+app.get('/*', function(req, res) {
+    try {
+        res.sendFile(__dirname + '/src/index.html');
+    } catch (err) {}
+});
 
 app.all('/*', function(req, res, next) {
     // CORS headers
