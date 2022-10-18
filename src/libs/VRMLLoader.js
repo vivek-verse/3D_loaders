@@ -29,6 +29,8 @@ THREE.VRMLLoader.prototype = {
 
 		request.addEventListener( 'load', function ( event ) {
 
+			console.log("event.target.responseText", event.target.responseText);
+
 			var object = scope.parse( event.target.responseText );
 
 			scope.dispatchEvent( { type: 'load', content: object } );

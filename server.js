@@ -3,11 +3,19 @@ const express = require('express');
 app = express();
 const port = process.env.PORT || 3000;
 app.use(express.static('src/'));
-app.get('/*', function(req, res) {
+
+app.get('/stl', function(req, res) {
     try {
-        res.sendFile(__dirname + '/src/index.html');
+        res.sendFile(__dirname + '/src/stl.html');
     } catch (err) {}
 });
+
+app.get('/vrml', function(req, res) {
+    try {
+        res.sendFile(__dirname + '/src/vrml.html');
+    } catch (err) {}
+});
+
 
 app.all('/*', function(req, res, next) {
     // CORS headers
